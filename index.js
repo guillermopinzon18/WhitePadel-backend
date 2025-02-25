@@ -27,6 +27,12 @@ app.get('/', (req, res) => {
   res.send('¡Backend de WhitePadel funcionando!');
 });
 
+// Ruta para obtener la IP (temporal, solo para pruebas)
+app.get('/ip', (req, res) => {
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  res.send({ ip });
+});
+
 // Iniciar el servidor
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
