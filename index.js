@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-require('dotenv').config(); // Para cargar las variables de entorno
+const authRoutes = require('./routes/userRoutes'); 
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -22,20 +23,14 @@ mongoose.connect(process.env.DATABASE_URL, {
   console.error('Error conectando a MongoDB:', err);
 });
 
+// Usar las rutas de autenticación
+app.use('/auth', authRoutes);
+
 // Ruta de prueba
 app.get('/', (req, res) => {
   res.send('¡Backend de WhitePadel funcionando!');
 });
 
-// Ruta para obtener la IP (temporal, solo para pruebas)
-app.get('/ip', (req, res) => {
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  res.send({ ip });
-});
-// Ruta de prueba
-app.get('/api/test', (req, res) => {
-  res.json({ message: '¡Backend funcionando correctamente!' });
-});
 // Iniciar el servidor
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
