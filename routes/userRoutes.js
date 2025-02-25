@@ -23,6 +23,30 @@ router.post('/register', async (req, res) => {
     res.status(500).json({ message: 'Error en el servidor' });
   }
 });
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Verifica si el usuario existe
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'El correo no está registrado' });
+    }
+
+    // Verifica si la contraseña es correcta
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: 'Contraseña incorrecta' });
+    }
+
+    // Si todo está bien, devuelve una respuesta exitosa
+    res.status(200).json({ message: 'Inicio de sesión exitoso' });
+  } catch (error) {
+    console.error('Error iniciando sesión:', error);
+    res.status(500).json({ message: 'Error en el servidor' });
+  }
+});
+
 // Ruta para obtener todos los usuarios
 router.get('/all', async (req, res) => {
   try {
