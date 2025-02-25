@@ -32,7 +32,10 @@ app.get('/ip', (req, res) => {
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   res.send({ ip });
 });
-
+// Ruta de prueba
+app.get('/api/test', (req, res) => {
+  res.json({ message: '¡Backend funcionando correctamente!' });
+});
 // Iniciar el servidor
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
