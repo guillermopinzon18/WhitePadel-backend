@@ -2,45 +2,57 @@ const express = require('express');
 const User = require('../models/User');
 const router = express.Router();
 
-// Ruta para registrar un nuevo usuario
 router.post('/register', async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Verifica si el usuario ya existe
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'El correo ya está registrado' });
     }
 
-    // Crea un nuevo usuario
     const newUser = new User({ email, password });
     await newUser.save();
 
-    res.status(201).json({ message: 'Usuario registrado exitosamente' });
+    // Simulación de token (si usas JWT, aquí generas el token)
+    const token = "fake-jwt-token";
+
+    res.status(201).json({
+      message: 'Usuario registrado exitosamente',
+      user: { id: newUser._id, email, puntos: 0 },
+      token
+    });
   } catch (error) {
     console.error('Error registrando usuario:', error);
     res.status(500).json({ message: 'Error en el servidor' });
   }
 });
+router.get('/health', (req, res) => {
+  res.status(200).json({ message: "Servidor activo" });
+});
+
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Verifica si el usuario existe
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'El correo no está registrado' });
     }
 
-    // Verifica si la contraseña es correcta
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
       return res.status(400).json({ message: 'Contraseña incorrecta' });
     }
 
-    // Si todo está bien, devuelve una respuesta exitosa
-    res.status(200).json({ message: 'Inicio de sesión exitoso' });
+    // Simulación de token
+    const token = "fake-jwt-token";
+
+    res.status(200).json({
+      message: 'Inicio de sesión exitoso',
+      user: { id: user._id, email, puntos: user.puntos || 0 },
+      token
+    });
   } catch (error) {
     console.error('Error iniciando sesión:', error);
     res.status(500).json({ message: 'Error en el servidor' });
